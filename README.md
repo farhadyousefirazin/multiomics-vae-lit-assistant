@@ -10,6 +10,12 @@ Multi-omics VAE literature is difficult to review because papers often use diffe
 
 The pipeline starts from PDF papers stored in Amazon S3, extracts their text, cleans the extracted content, splits the documents into chunks, creates embeddings for semantic search, retrieves the most relevant chunks for a user question, and finally uses an LLM through Amazon Bedrock to generate an answer grounded in the retrieved sources.
 
+## Dataset
+
+The document collection used in this project consists of 34 PDF files, including research papers and PhD theses related to Variational Autoencoders, single-cell analysis, multi-omics integration, gene expression, and chromatin accessibility.
+
+The original PDF files, extracted text, chunks, and embeddings are not included in this repository due to copyright and licensing restrictions.
+
 ## Main Use Case
 
 The assistant is designed for questions such as:
