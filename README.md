@@ -114,7 +114,6 @@ multiomics-vae-lit-assistant/
 │   └── 06_rag_answering.ipynb
 │
 ├── src/
-│   ├── pdf_loader.py
 │   ├── text_cleaning.py
 │   ├── chunking.py
 │   ├── embeddings.py
