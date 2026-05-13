@@ -8,11 +8,13 @@ This project was built to make literature review easier. Instead of manually sea
 
 Multi-omics VAE literature is difficult to review because papers often use different terminology, datasets, model architectures, latent-space assumptions, and evaluation metrics. This project builds a Retrieval-Augmented Generation pipeline that processes a collection of research PDFs and enables semantic question answering over them.
 
-The pipeline starts from PDF papers stored in Amazon S3, extracts their text, cleans the extracted content, splits the documents into chunks, creates embeddings for semantic search, retrieves the most relevant chunks for a user question, and finally uses an LLM through Amazon Bedrock to generate an answer grounded in the retrieved sources.
+The pipeline starts from a manually curated collection of PDF papers stored in Amazon S3. The system extracts their text, cleans the extracted content, splits the documents into chunks, creates embeddings for semantic search, retrieves the most relevant chunks for a user question, and uses an LLM through Amazon Bedrock to generate an answer grounded in the retrieved sources.
 
 ## Dataset
 
 The document collection used in this project consists of 34 PDF files, including research papers and PhD theses related to Variational Autoencoders, single-cell analysis, multi-omics integration, gene expression, and chromatin accessibility.
+
+Data gathering was part of the project workflow. The papers were manually collected and organized around the topic of VAE-based methods for single-cell and multi-omics analysis, with a focus on gene expression, chromatin accessibility, RNA-seq, ATAC-seq, and related latent-variable models.
 
 The original PDF files, extracted text, chunks, and embeddings are not included in this repository due to copyright and licensing restrictions.
 
@@ -69,6 +71,8 @@ Amazon Bedrock is used for the final LLM answering step. After relevant chunks a
 ## Project Pipeline
 
 ```text
+Manual paper collection
+        ↓
 PDF papers in S3
         ↓
 Text extraction with pypdf
@@ -87,7 +91,6 @@ LLM answer generation with Amazon Bedrock
 ## S3 Structure
 
 ```text
-
 ├── papers/
 │   ├── raw/
 │   ├── text/
@@ -134,13 +137,17 @@ multiomics-vae-lit-assistant/
 
 ## Main Components
 
-### 1. PDF Text Extraction
+### 1. Paper Collection and Organization
 
-The raw papers are stored in S3 under:
+The collected documents are stored privately in S3 and used as the input corpus for the RAG pipeline.
+
+The raw PDF files are stored privately in S3 under:
 
 ```text
 papers/raw/
 ```
+
+### 2. PDF Text Extraction
 
 The extraction step reads the PDF files using `pypdf`, extracts embedded text from each document, and saves the extracted text files to:
 
@@ -150,7 +157,7 @@ papers/text/
 
 This avoids paid OCR services and works well for digital academic PDFs that already contain selectable text.
 
-### 2. Text Cleaning
+### 3. Text Cleaning
 
 The cleaning step performs light preprocessing on extracted text. It removes unnecessary page markers, reduces excessive spaces, fixes broken line breaks, and handles simple hyphenated word splits.
 
@@ -162,7 +169,7 @@ Cleaned files are saved to:
 papers/clean_text/
 ```
 
-### 3. Chunking
+### 4. Chunking
 
 Long papers are split into overlapping text chunks. Each chunk keeps metadata, including:
 
@@ -183,7 +190,7 @@ chunks/paper_chunks.jsonl
 
 JSONL is used because each line represents one independent chunk with its metadata.
 
-### 4. Embedding Generation
+### 5. Embedding Generation
 
 Each chunk is converted into a numerical vector using a sentence-transformer embedding model:
 
@@ -200,13 +207,13 @@ embeddings/chunk_metadata.jsonl
 
 The embedding file stores the numerical vectors, while the metadata file stores the corresponding paper names, chunk IDs, and text.
 
-### 5. Semantic Retrieval
+### 6. Semantic Retrieval
 
 When the user asks a question, the question is converted into an embedding using the same embedding model. The system compares the question embedding with all chunk embeddings using cosine similarity and retrieves the top relevant chunks.
 
 This step allows the system to find relevant passages even when the question does not exactly match the wording used in the papers.
 
-### 6. RAG Answer Generation
+### 7. RAG Answer Generation
 
 The retrieved chunks are combined into a prompt and sent to an LLM through Amazon Bedrock. The LLM is instructed to answer using only the retrieved context and cite the source paper names when possible.
 
@@ -244,9 +251,12 @@ organizing thesis-related literature
 
 ## Current Status
 
-Completed:
+The first working version of the project is complete.
+
+Completed components:
 
 ```text
+manual paper collection and organization
 AWS project setup
 GitHub repository setup
 S3 project structure
@@ -256,14 +266,7 @@ text cleaning utility
 chunk generation
 embedding generation
 semantic retrieval
-```
-
-In progress:
-
-```text
-Amazon Bedrock answer generation
-RAG prompt refinement
-README/documentation polish
+Bedrock-based RAG answer generation
 ```
 
 ## Limitations
