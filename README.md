@@ -81,7 +81,6 @@ LLM answer generation with Amazon Bedrock
 ## S3 Structure
 
 ```text
-s3://multiomic-vae-literature-rag-123223178042-eu-north-1-an/
 
 ├── papers/
 │   ├── raw/
